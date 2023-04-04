@@ -4,14 +4,22 @@ import numpy as np
 from scipy.stats import norm
 
 
-chat_id = 123456 # Ваш chat ID, не меняйте название переменной
+chat_id = 263008738 # Ваш chat ID, не меняйте название переменной
 
 def solution(p: float, x: np.array) -> tuple:
-    # Измените код этой функции
-    # Это будет вашим решением
-    # Не меняйте название функции и её аргументы
-    alpha = 1 - p
-    loc = x.mean()
-    scale = np.sqrt(np.var(x)) / np.sqrt(len(x))
-    return loc - scale * norm.ppf(1 - alpha / 2), \
-           loc - scale * norm.ppf(alpha / 2)
+    n_samples = 1000 # количество выборок для бутстрэпа
+    n = len(X)
+    a_values = np.zeros(n_samples)
+    for i in range(n_samples):
+        X_bootstrap = np.random.choice(X, size=n, replace=True)
+        mean_X = np.mean(X_bootstrap)
+        std_X = np.std(X_bootstrap, ddof=1)
+        a_bootstrap = 2 * mean_X / (77 ** 2) # коэффициент ускорения на этой выборке
+        a_values[i] = a_bootstrap
+    alpha = 1 - confidence_level
+    z_value = norm.ppf(1 - alpha / 2) # Z-значение для заданного уровня доверия
+    mean_a = np.mean(a_values)
+    std_a = np.std(a_values, ddof=1)
+    lower_bound = mean_a - z_value * std_a / np.sqrt(n_samples)
+    upper_bound = mean_a + z_value * std_a / np.sqrt(n_samples)
+    return (lower_bound, upper_bound)
